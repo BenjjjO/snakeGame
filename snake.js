@@ -99,6 +99,29 @@ function gameOver() {
   ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2);
   ctx.font = "20px Arial";
   ctx.fillText("Final Score: " + score, canvas.width / 2, canvas.height / 2 + 30);
+
+  // show restart button
+  document.getElementById("game-over").style.display = "block";
 }
 
+// Start game loop
 game = setInterval(drawGame, 120);
+
+// Restart button logic
+document.getElementById("restart-btn").addEventListener("click", () => {
+  // Reset game state
+  snake = [{ x: 9 * box, y: 10 * box }];
+  direction = "RIGHT";
+  score = 0;
+  document.getElementById("score").innerText = "Score: " + score;
+
+  // Hide game over screen
+  document.getElementById("game-over").style.display = "none";
+
+  // Respawn food
+  food = randomFood();
+
+  // Restart game loop
+  clearInterval(game);
+  game = setInterval(drawGame, 120);
+});
