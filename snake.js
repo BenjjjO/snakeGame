@@ -50,19 +50,35 @@ document.addEventListener("keydown", e => {
 });
 
 function drawGame() {
+  // background
   ctx.fillStyle = "#222";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  // draw snake
   snake.forEach((segment, i) => {
-    ctx.fillStyle = i === 0 ? "#0f0" : "#fff";
-    ctx.fillRect(segment.x, segment.y, box, box);
+    ctx.beginPath();
+    ctx.fillStyle = i === 0 ? "#0f0" : "#fff"; // head green, body white
+    ctx.arc(
+      segment.x + box / 2, // center X
+      segment.y + box / 2, // center Y
+      box / 2 - 2,         // radius (slightly smaller so circles don’t overlap)
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
     ctx.strokeStyle = "#111";
-    ctx.strokeRect(segment.x, segment.y, box, box);
+    ctx.stroke();
+    ctx.closePath();
   });
 
+  // draw food
+  ctx.beginPath();
   ctx.fillStyle = "#f00";
-  ctx.fillRect(food.x, food.y, box, box);
+  ctx.arc(food.x + box / 2, food.y + box / 2, box / 2 - 2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.closePath();
 
+  // move snake
   let snakeX = snake[0].x;
   let snakeY = snake[0].y;
 
@@ -71,6 +87,7 @@ function drawGame() {
   if (direction === "RIGHT") snakeX += box;
   if (direction === "DOWN") snakeY += box;
 
+  // check food collision
   if (snakeX === food.x && snakeY === food.y) {
     score++;
     document.getElementById("score").innerText = "Score: " + score;
@@ -81,6 +98,7 @@ function drawGame() {
 
   const newHead = { x: snakeX, y: snakeY };
 
+  // collision check
   if (
     snakeX < 0 || snakeY < 0 ||
     snakeX >= canvas.width || snakeY >= canvas.height ||
@@ -93,6 +111,7 @@ function drawGame() {
 
   snake.unshift(newHead);
 }
+
 
 function randomFood() {
   let newFood;
