@@ -41,7 +41,7 @@ canvas.addEventListener("touchend", e => {
   }
 }, { passive: true });
 
-// Optional: support keyboard arrows (desktop)
+// Keyboard arrows
 document.addEventListener("keydown", e => {
   if (e.key === "ArrowLeft" && direction !== "RIGHT") direction = "LEFT";
   if (e.key === "ArrowUp" && direction !== "DOWN") direction = "UP";
@@ -54,31 +54,7 @@ function drawGame() {
   ctx.fillStyle = "#222";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // draw snake
-  snake.forEach((segment, i) => {
-    ctx.beginPath();
-    ctx.fillStyle = i === 0 ? "#0f0" : "#fff"; // head green, body white
-    ctx.arc(
-      segment.x + box / 2, // center X
-      segment.y + box / 2, // center Y
-      box / 2 - 2,         // radius (slightly smaller so circles don’t overlap)
-      0,
-      Math.PI * 2
-    );
-    ctx.fill();
-    ctx.strokeStyle = "#111";
-    ctx.stroke();
-    ctx.closePath();
-  });
-
-  // draw food
-  ctx.beginPath();
-  ctx.fillStyle = "#f00";
-  ctx.arc(food.x + box / 2, food.y + box / 2, box / 2 - 2, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.closePath();
-
-  // move snake
+  // snake movement
   let snakeX = snake[0].x;
   let snakeY = snake[0].y;
 
@@ -87,18 +63,9 @@ function drawGame() {
   if (direction === "RIGHT") snakeX += box;
   if (direction === "DOWN") snakeY += box;
 
-  // check food collision
-  if (snakeX === food.x && snakeY === food.y) {
-    score++;
-    document.getElementById("score").innerText = "Score: " + score;
-    food = randomFood();
-  } else {
-    snake.pop();
-  }
-
   const newHead = { x: snakeX, y: snakeY };
 
-  // collision check
+  // check collision
   if (
     snakeX < 0 || snakeY < 0 ||
     snakeX >= canvas.width || snakeY >= canvas.height ||
@@ -109,9 +76,53 @@ function drawGame() {
     return;
   }
 
+  // add new head
   snake.unshift(newHead);
-}
 
+  // eat food
+  if (snakeX === food.x && snakeY === food.y) {
+    score++;
+    document.getElementById("score").innerText = "Score: " + score;
+    food = randomFood();
+  } else {
+    snake.pop();
+  }
+
+  // draw snake
+  snake.forEach((segment, i) => {
+    ctx.beginPath();
+    ctx.fillStyle = i === 0 ? "#0f0" : "#0c0"; // head brighter
+    ctx.arc(
+      segment.x + box / 2,
+      segment.y + box / 2,
+      box / 2 - 2,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+
+    // connect body with tube
+    if (i > 0) {
+      ctx.beginPath();
+      ctx.strokeStyle = "#0c0";
+      ctx.lineWidth = box - 4;
+      ctx.moveTo(segment.x + box / 2, segment.y + box / 2);
+      ctx.lineTo(snake[i - 1].x + box / 2, snake[i - 1].y + box / 2);
+      ctx.stroke();
+    }
+  });
+
+  // draw food
+  ctx.beginPath();
+  ctx.fillStyle = "#f00";
+  ctx.arc(food.x + box / 2, food.y + box / 2, box / 2 - 2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // score text
+  ctx.fillStyle = "#fff";
+  ctx.font = "20px Arial";
+  ctx.fillText("Score: " + score, box, 1.5 * box);
+}
 
 function randomFood() {
   let newFood;
