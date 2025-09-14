@@ -7,35 +7,43 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
   font-family: "Poppins", sans-serif;
   color: #fff;
   text-align: center;
 }
 
+/* Title */
 h1 {
-  font-size: 2rem;
+  font-size: 2.2rem;
   margin-bottom: 10px;
-  text-shadow: 0 0 10px #0f0, 0 0 20px #0f0;
+  background: linear-gradient(90deg, #ff6ec4, #7873f5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 12px rgba(255, 110, 196, 0.7), 0 0 24px rgba(120, 115, 245, 0.7);
   animation: glowText 2s infinite alternate;
 }
 
+/* Score */
 #score {
   font-size: 1.5rem;
   margin-bottom: 15px;
-  color: #ffeb3b;
-  text-shadow: 0 0 5px #ff0, 0 0 10px #ff0;
+  color: #4deeea;
+  text-shadow: 0 0 8px #4deeea, 0 0 16px #4deeea;
 }
 
+/* Canvas */
 canvas {
   width: 600px;
-  max-width: 90vw; /* ensures canvas shrinks on mobile */
+  max-width: 90vw;
   height: 400px;
-  border: 3px solid #fff;
-  border-radius: 10px;
-  background: #111;
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
-  animation: pulse 2s infinite alternate;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  background: rgba(15, 15, 25, 0.9);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 25px rgba(120, 115, 245, 0.6),
+              0 0 50px rgba(77, 238, 234, 0.4);
+  animation: pulse 3s infinite alternate;
 }
 
 /* Game Over Popup */
@@ -46,95 +54,67 @@ canvas {
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 2rem;
-  background: rgba(0, 0, 0, 0.8);
-  padding: 20px 40px;
-  border-radius: 12px;
+  background: rgba(25, 25, 40, 0.9);
+  backdrop-filter: blur(12px);
+  padding: 25px 50px;
+  border-radius: 14px;
   color: #fff;
   text-align: center;
+  box-shadow: 0 0 30px rgba(120, 115, 245, 0.7);
   animation: fadeIn 1s forwards;
 }
 
+/* Restart Button */
 #restart-btn {
-  margin-top: 15px;
-  padding: 10px 25px;
+  margin-top: 18px;
+  padding: 12px 28px;
   font-size: 1rem;
   font-weight: bold;
-  background: #0f0;
+  background: linear-gradient(135deg, #4deeea, #7873f5);
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  color: #000;
-  box-shadow: 0 0 10px #0f0, 0 0 20px #0f0;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(120, 115, 245, 0.8), 
+              0 0 25px rgba(77, 238, 234, 0.6);
   transition: 0.3s ease;
 }
 
 #restart-btn:hover {
-  background: #1aff1a;
-  box-shadow: 0 0 15px #0f0, 0 0 30px #0f0;
   transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(255, 110, 196, 0.9), 
+              0 0 35px rgba(120, 115, 245, 0.9);
 }
 
 /* Animations */
 @keyframes pulse {
-  from { box-shadow: 0 0 10px rgba(0, 255, 0, 0.3); }
-  to { box-shadow: 0 0 25px rgba(0, 255, 0, 0.8); }
+  from { box-shadow: 0 0 15px rgba(120, 115, 245, 0.4); }
+  to   { box-shadow: 0 0 40px rgba(77, 238, 234, 0.8); }
 }
 
 @keyframes glowText {
-  from { text-shadow: 0 0 5px #0f0, 0 0 15px #0f0; }
-  to { text-shadow: 0 0 15px #0f0, 0 0 30px #0f0; }
+  from { text-shadow: 0 0 8px rgba(255, 110, 196, 0.7), 0 0 20px rgba(120, 115, 245, 0.7); }
+  to   { text-shadow: 0 0 16px rgba(255, 110, 196, 1), 0 0 32px rgba(120, 115, 245, 1); }
 }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translate(-50%, -60%); }
-  to { opacity: 1; transform: translate(-50%, -50%); }
+  to   { opacity: 1; transform: translate(-50%, -50%); }
 }
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
-  h1 {
-    font-size: 1.5rem;
-  }
-
-  #score {
-    font-size: 1.2rem;
-  }
-
-  canvas {
-    height: 250px;
-  }
-
-  #game-over {
-    font-size: 1.5rem;
-    padding: 15px 25px;
-  }
-
-  #restart-btn {
-    padding: 8px 20px;
-    font-size: 0.9rem;
-  }
+  h1 { font-size: 1.7rem; }
+  #score { font-size: 1.3rem; }
+  canvas { height: 260px; }
+  #game-over { font-size: 1.5rem; padding: 20px 30px; }
+  #restart-btn { padding: 9px 22px; font-size: 0.9rem; }
 }
 
 @media (max-width: 480px) {
-  h1 {
-    font-size: 1.2rem;
-  }
-
-  #score {
-    font-size: 1rem;
-  }
-
-  canvas {
-    height: 200px;
-  }
-
-  #game-over {
-    font-size: 1.2rem;
-    padding: 10px 20px;
-  }
-
-  #restart-btn {
-    padding: 6px 15px;
-    font-size: 0.85rem;
-  }
+  h1 { font-size: 1.3rem; }
+  #score { font-size: 1.1rem; }
+  canvas { height: 200px; }
+  #game-over { font-size: 1.2rem; padding: 12px 22px; }
+  #restart-btn { padding: 7px 18px; font-size: 0.85rem; }
 }
