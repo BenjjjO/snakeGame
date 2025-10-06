@@ -30,3 +30,22 @@ class EnhancedSnakeGame {
         this.init();
     }
 
+    init() {
+        this.setupCanvas();
+        this.setupParticles();
+        this.setupControls();
+        this.updateHighScore();
+
+        window.addEventListener("resize", () => this.setupCanvas());
+        document.getElementById("restart-btn")
+            .addEventListener("click", () => this.startGame());
+
+        // Level select buttons
+        document.getElementById("level1-btn")
+            .addEventListener("click", () => { this.level = 1; this.startGame(); });
+        document.getElementById("level2-btn")
+            .addEventListener("click", () => { this.level = 2; this.startGame(); });
+
+        this.startGame();
+    }
+
