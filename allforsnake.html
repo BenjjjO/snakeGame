@@ -1,13 +1,160 @@
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-const box = 20;
-let snake = [{ x: 9 * box, y: 10 * box }];
-let direction = "RIGHT";
-let food, score = 0, game;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake Game</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #111;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+    #gameCanvas {
+      border: 2px solid #444;
+      display: block;
+    }
+    #game-over {
+      display: none;
+      position: absolute;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      padding: 40px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    #final-score {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    #restart-btn {
+      background: #0f0;
+      color: #000;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #restart-btn:hover {
+      background: #0c0;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+  <div id="game-over">
+    <div id="final-score"></div>
+    <button id="restart-btn">Restart</button>
+  </div>
 
-function resizeCanvas() {
-  const size = Math.min(window.innerWidth, window.innerHeight) - 40;
-  canvas.width = canvas.height = size - (size % box);
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const box = 20;
+    let snake = [{ x: 9 * box, y: 10 * box }];
+    let direction = "RIGHT";
+    let food, score = 0, game;
+
+    function resizeCanvas() {
+      const size = Math.min(window.innerWidth, window.innerHeight) - 40;
+      canvas.width = canvas.height = size - (size % box);
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    let touchStart = {};
+    canvas.addEventListener("touchstart", e => {
+      touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }, { passive: true });
+
+    canvas.addEventListener("touchend", e => {
+      const dx = e.changedTouches[0].clientX - touchStart.x;
+      const dy = e.changedTouches[0].clientY - touchStart.y;
+      if (Math.abs(dx) < 30 && Math.abs(dy) < 30) return;
+      
+      if (Math.abs(dx) > Math.abs(dy)) {
+        direction = dx > 0 && direction !== "LEFT" ? "RIGHT" : direction !== "RIGHT" ? "LEFT" : direction;
+      } else {
+        direction = dy > 0 && direction !== "UP" ? "DOWN" : direction !== "DOWN" ? "UP" : direction;
+      }
+    });
+
+    document.body.addEventListener("touchmove", e => e.target === canvas && e.preventDefault(), { passive: false });
+
+    document.addEventListener("keydown", e => {
+      const key = e.key.replace("Arrow", "").toUpperCase();
+      const opp = { LEFT: "RIGHT", RIGHT: "LEFT", UP: "DOWN", DOWN: "UP" };
+      if (opp[key] && direction !== opp[key]) direction = key;
+    });
+
+    function randomFood() {
+      let f;
+      do f = { x: Math.floor(Math.random() * canvas.width / box) * box, y: Math.floor(Math.random() * canvas.height / box) * box };
+      while (snake.some(s => s.x === f.x && s.y === f.y));
+      return f;
+    }
+
+    function drawGame() {
+      ctx.fillStyle = "#222";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const moves = { LEFT: [-box, 0], UP: [0, -box], RIGHT: [box, 0], DOWN: [0, box] };
+      const [dx, dy] = moves[direction];
+      const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+      if (head.x < 0 || head.y < 0 || head.x >= canvas.width || head.y >= canvas.height || snake.some(s => s.x === head.x && s.y === head.y)) {
+        clearInterval(game);
+        document.getElementById("final-score").innerText = "Final Score: " + score;
+        document.getElementById("game-over").style.display = "block";
+        return;
+      }
+
+      snake.unshift(head);
+      if (head.x === food.x && head.y === food.y) {
+        score++;
+        food = randomFood();
+      } else snake.pop();
+
+      snake.forEach((s, i) => {
+        ctx.fillStyle = i === 0 ? "#0f0" : "#0c0";
+        ctx.beginPath();
+        ctx.arc(s.x + box/2, s.y + box/2, box/2 - 2, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      ctx.fillStyle = "#f00";
+      ctx.beginPath();
+      ctx.arc(food.x + box/2, food.y + box/2, box/2 - 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#fff";
+      ctx.font = "20px Arial";
+      ctx.fillText("Score: " + score, box, 1.5 * box);
+    }
+
+    document.getElementById("restart-btn").addEventListener("click", () => {
+      snake = [{ x: 9 * box, y: 10 * box }];
+      direction = "RIGHT";
+      score = 0;
+      food = randomFood();
+      document.getElementById("game-over").style.display = "none";
+      clearInterval(game);
+      game = setInterval(drawGame, 120);
+    });
+
+    food = randomFood();
+    game = setInterval(drawGame, 120);
+  </script>
+</body>
+</html>
